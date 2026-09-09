@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DataFit — Test your dataset</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: 'Revive80Wide';
+    src: url('assets/Revive80Wide.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  :root {
+    --paper: #FFFFFF;
+    --ink: #0A0A0A;
+    --ink-soft: #55555C;
+    --mint-card: #DCE9E4;
+    --mint-card-deep: #C7DCD5;
+    --danger: #D6584C;
+    --warn: #D2A23A;
+    --good: #4B9E7A;
+    --radius: 20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { overflow-x: hidden; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Courier Prime', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  a { text-decoration: none; color: inherit; }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  :focus-visible {
+    outline: 3px solid #245C4D;
+    outline-offset: 3px;
+  }
+
+  /* ---------- Nav ---------- */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 32px 0;
+  }
+  .nav-home {
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink);
+    padding-top: 10px;
+  }
+  .nav-home:hover { opacity: 0.6; }
+  .nav-brand { text-align: right; }
+  .nav-brand .wordmark {
+    font-family: 'Revive80Wide', 'Archivo Black', sans-serif;
+    font-size: 32px;
+    line-height: 1;
+  }
+  .nav-brand .tagline {
+    font-size: 10.5px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    margin-top: 4px;
+    color: var(--ink);
+    display: block;
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+    transform: scaleX(0.58);
+    transform-origin: center;
+    white-space: nowrap;
+  }
+
+  /* ---------- Intro copy ---------- */
+  .intro {
+    max-width: 780px;
+    margin: 56px auto 40px;
+    padding: 0 32px;
+    text-align: center;
+  }
+  .intro p {
+    font-size: 14.5px;
+    line-height: 1.7;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+
+  /* ---------- Upload panel ---------- */
+  .panel-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 0 20px 60px;
+  }
+  .panel {
+    position: relative;
+    width: 100%;
+    max-width: 660px;
+    background: linear-gradient(160deg, var(--mint-card), #EDF3F0);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(20,40,50,0.08);
+  }
+
+  .dropzone {
+    border: 1.5px dashed rgba(63,120,105,0.45);
+    border-radius: 14px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(255,255,255,0.5);
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .dropzone:focus-visible {
+    border-color: #245C4D;
+    outline: 3px solid #245C4D;
+    outline-offset: 3px;
+  }
+  .dropzone:hover, .dropzone.drag-over {
+    border-color: #3F7869;
+    background: rgba(255,255,255,0.75);
+  }
+  .dropzone p { font-size: 14px; color: var(--ink-soft); font-family: 'Courier Prime', monospace; }
+  .dropzone .filename { color: var(--ink); font-weight: 700; margin-top: 8px; }
+  input[type="file"] { display: none; }
+
+  .field-row { display: flex; gap: 14px; margin-top: 20px; }
+  .field { flex: 1; }
+  .field-help { color: var(--ink-soft); display: block; font-size: 10.5px; line-height: 1.4; margin-top: 6px; }
+  .field label {
+    display: block;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+    margin-bottom: 7px;
+  }
+  select, input[type="text"] {
+    width: 100%;
+    padding: 11px 13px;
+    border-radius: 10px;
+    border: 1px solid rgba(10,10,10,0.12);
+    background: var(--white, #fff);
+    font-family: 'Courier Prime', monospace;
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  .run-btn {
+    margin-top: 24px;
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: none;
+    background: var(--ink);
+    color: #fff;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  .run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .run-btn:not(:disabled):hover { opacity: 0.85; }
+
+  .error-box {
+    margin-top: 16px;
+    padding: 13px 15px;
+    border-radius: 10px;
+    background: rgba(214,88,76,0.08);
+    border: 1px solid rgba(214,88,76,0.25);
+    color: var(--danger);
+    font-size: 13px;
+    display: none;
+  }
+
+  /* ---------- Results ---------- */
+  .results { display: none; margin-top: 36px; }
+
+  .score-hero {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 10px 0 28px;
+  }
+  .score-ring-wrap { position: relative; width: 128px; height: 128px; flex-shrink: 0; }
+  .score-ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .score-ring-track { fill: none; stroke: rgba(10,10,10,0.08); stroke-width: 10; }
+  .score-ring-progress { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dasharray 0.6s ease; }
+  .score-ring-number {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 30px;
+  }
+  .score-meta .score-label {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+  }
+  .score-meta .score-help { color: var(--ink-soft); font-size: 11.5px; line-height: 1.5; margin-top: 8px; max-width: 330px; }
+  .priority-summary { margin: 0 0 20px; padding: 16px 18px; border-radius: 14px; background: rgba(255,255,255,0.55); }
+  .priority-summary h3 { font-family: 'Archivo Black', sans-serif; font-size: 12.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .priority-summary p { color: var(--ink-soft); font-size: 12.5px; line-height: 1.6; }
+  .status-pill {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-family: 'Archivo Black', sans-serif;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.7);
+  }
+
+  .breakdown-chart {
+    margin: 8px 0 26px;
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.45);
+    border-radius: 14px;
+  }
+  .breakdown-chart .chart-title {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .score-method { color: var(--ink-soft); font-size: 11.5px; line-height: 1.5; margin: -4px 0 12px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-label {
+    width: 130px;
+    flex-shrink: 0;
+    font-size: 11.5px;
+    text-transform: capitalize;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bar-track { flex: 1; height: 9px; background: rgba(10,10,10,0.07); border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; transition: width 0.5s ease; }
+
+  .finding {
+    background: rgba(255,255,255,0.55);
+    border-radius: 12px;
+    padding: 15px 17px;
+    margin-bottom: 10px;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .finding .finding-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot.critical, .bar-fill.critical, .score-ring-progress.critical { background: var(--danger); stroke: var(--danger); }
+  .dot.warning, .bar-fill.warning, .score-ring-progress.warning { background: var(--warn); stroke: var(--warn); }
+  .dot.info, .bar-fill.info, .score-ring-progress.info { background: var(--good); stroke: var(--good); }
+
+  .next-steps { margin-top: 22px; }
+  .next-steps h3 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .next-steps ul { padding-left: 18px; font-size: 13.5px; line-height: 1.7; }
+
+  .scope-note {
+    margin-top: 24px;
+    padding: 14px 16px;
+    border-left: 3px solid #3F7869;
+    background: rgba(255,255,255,0.55);
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+
+  .experiments {
+    margin-top: 22px;
+    padding: 22px;
+    border: 1px solid rgba(10,10,10,0.1);
+    border-radius: 14px;
+    background: rgba(236,244,241,0.58);
+  }
+  .experiments {
+    border-top: 1px solid rgba(10,10,10,0.12);
+  }
+  .experiments h3 { font-family: 'Archivo Black', sans-serif; font-size: 13px; text-transform: uppercase; margin-bottom: 7px; }
+  .experiments-intro { color: var(--ink-soft); font-size: 12.5px; line-height: 1.6; margin-bottom: 14px; }
+  .experiment-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .experiment-card { display: flex; flex-direction: column; padding: 14px; border: 1px solid rgba(10,10,10,0.12); border-radius: 12px; background: rgba(255,255,255,0.45); }
+  .experiment-card h4 { font-family: 'Archivo Black', sans-serif; font-size: 11px; text-transform: uppercase; margin-bottom: 7px; }
+  .experiment-card p { color: var(--ink-soft); font-size: 11.5px; line-height: 1.5; min-height: 52px; }
+  .experiment-btn { width: 100%; margin-top: auto; padding: 9px 8px; border: 1px solid var(--ink); border-radius: 8px; background: transparent; color: var(--ink); font: 700 11px 'Courier Prime', monospace; text-transform: uppercase; cursor: pointer; }
+  .experiment-btn:hover:not(:disabled) { background: var(--ink); color: #fff; }
+  .experiment-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .experiment-output { margin-top: 14px; padding: 14px; border-radius: 10px; background: rgba(255,255,255,0.65); font-size: 12.5px; line-height: 1.6; white-space: pre-line; }
+  .feedback-btn { display: block; width: fit-content; margin: 18px auto 0; padding: 12px 22px; border-radius: 8px; background: var(--ink); color: #fff; font: 700 12px 'Courier Prime', monospace; text-transform: uppercase; text-decoration: none; }
+  .feedback-btn:hover { background: #3f7869; }
+  .experiment-output strong { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; font-size: 11px; }
+  .experiment-metrics { margin-top: 10px; width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  .experiment-metrics th, .experiment-metrics td { padding: 5px; text-align: left; border-bottom: 1px solid rgba(10,10,10,0.1); }
+  .experiment-metrics th { color: var(--ink-soft); text-transform: uppercase; font-size: 10px; }
+
+  .privacy-note {
+    max-width: 660px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+    padding: 0 20px 60px;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 600px) {
+    nav { flex-direction: column; gap: 18px; padding: 28px 20px 0; }
+    .nav-brand { text-align: left; }
+    .panel { padding: 26px; }
+    .score-hero { flex-direction: column; align-items: flex-start; }
+    .bar-label { width: 100px; }
+    .experiment-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-home">Home</a>
+    <div class="nav-brand">
+      <div class="wordmark">DATAFIT</div>
+      <div class="tagline">Know if your data is ready before you train.</div>
+    </div>
+  </nav>
+
+  <main>
+  <div class="intro">
+    <h1 class="sr-only">Assess your dataset</h1>
+    <p>DataFit checks your dataset for the issues that quietly wreck ML performance, and tells you what they mean for your specific task.</p>
+  </div>
+
+  <div class="panel-wrap">
+    <div class="panel">
+      <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-controls="fileInput" aria-describedby="dropzone-text">
+        <p id="dropzone-text">Drop a CSV here, or click to choose a file</p>
+        <div class="filename" id="filename" aria-live="polite"></div>
+        <input type="file" id="fileInput" accept=".csv" />
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="task">Task</label>
+          <select id="task">
+            <option value="classification">Classification</option>
+            <option value="regression">Regression</option>
+            <option value="generic">Not sure / general</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="targetColumn">Target column (optional)</label>
+          <input type="text" id="targetColumn" placeholder="e.g. label" aria-describedby="targetHelp" />
+          <small class="field-help" id="targetHelp">Add the column you want to predict for task-specific checks.</small>
+        </div>
+      </div>
+
+      <button class="run-btn" id="runBtn" disabled>Assess my dataset</button>
+      <div class="error-box" id="errorBox" role="alert"></div>
+
+      <div class="results" id="results" aria-live="polite" tabindex="-1">
+        <div class="score-hero">
+          <div class="score-ring-wrap">
+            <svg viewBox="0 0 128 128">
+              <circle class="score-ring-track" cx="64" cy="64" r="54"></circle>
+              <circle class="score-ring-progress" id="scoreRing" cx="64" cy="64" r="54"
+                      stroke-dasharray="0 340"></circle>
+            </svg>
+            <div class="score-ring-number" id="scoreNumber">—</div>
+          </div>
+          <div class="score-meta">
+            <div class="score-label">Dataset Risk Assessment</div>
+            <div class="status-pill" id="statusPill"></div>
+            <p class="score-help">A task-specific heuristic summary of dataset-level risk factors. It is not a prediction of model accuracy or performance.</p>
+          </div>
+        </div>
+
+        <div class="priority-summary" id="prioritySummary" hidden>
+          <h3>Start with these priorities</h3>
+          <p id="prioritySummaryText"></p>
+        </div>
+
+        <div class="breakdown-chart" id="breakdownChart" style="display:none;">
+          <div class="chart-title">How this assessment was calculated</div>
+          <p class="score-method">Each bar shows the task-weighted deduction for an observed dataset risk. The assessment summarizes what DataFit can see; it does not estimate your future model score.</p>
+          <div id="barRows"></div>
+        </div>
+
+        <div id="findingsList"></div>
+        <div class="next-steps">
+          <h3>Recommended next steps</h3>
+          <ul id="nextStepsList"></ul>
+        </div>
+        <p class="scope-note" id="scopeNote"></p>
+
+      </div>
+      <section class="experiments" aria-labelledby="experiments-title">
+          <h3 id="experiments-title">Gather evidence with an experiment</h3>
+          <p class="experiments-intro">These optional tests train a disposable baseline model or preview a change. They provide directional evidence, not a guarantee about your final model.</p>
+          <div class="experiment-grid">
+            <div class="experiment-card">
+              <h4>Test rebalancing</h4>
+              <p>Compare a baseline with class-rebalancing strategies.</p>
+              <button class="experiment-btn" data-experiment="imbalance" type="button">Run test</button>
+            </div>
+            <div class="experiment-card">
+              <h4>Test synthetic data</h4>
+              <p>Check whether modeled extra rows improve held-out results.</p>
+              <button class="experiment-btn" data-experiment="synthetic" type="button">Run test</button>
+            </div>
+            <div class="experiment-card">
+              <h4>Preview cleanup</h4>
+              <p>See which safe cleanup actions would be proposed.</p>
+              <button class="experiment-btn" data-experiment="cleanup-preview" type="button">Preview</button>
+            </div>
+            <div class="experiment-card">
+              <h4>Regression baseline</h4>
+              <p>Evaluate a simple held-out baseline with MAE, RMSE, and R².</p>
+              <button class="experiment-btn" data-experiment="regression-baseline" type="button">Run baseline</button>
+            </div>
+          </div>
+          <div class="experiment-output" id="experimentOutput" role="status" aria-live="polite" hidden></div>
+      </section>
+      <a class="feedback-btn" href="https://forms.gle/xhpvg98SypMfscQm7" target="_blank" rel="noopener">Share feedback ↗</a>
+    </div>
+  </div>
+
+  <div class="privacy-note">
+    Your file is processed in memory for this assessment and is not intentionally saved by DataFit.
+  </div>
+  <footer style="background:#0A0A0A;color:#fff;padding:48px 32px 32px;margin-top:20px;">
+    <div style="font-family:'Archivo Black',sans-serif;font-size:40px;line-height:1;">DATAFIT</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:24px;font-size:12px;">
+      <span>BY <a href="https://www.sentrive.co.in" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline;">SENTRIVE</a></span>
+      <div style="display:flex;gap:18px;align-items:center;font-family:'Archivo Black',sans-serif;font-size:15px;">
+        <a href="https://www.instagram.com/sentrive_?igsh=MTJyaWhjeWJ2bzIyag%3D%3D" target="_blank" rel="noopener" aria-label="Sentrive on Instagram" style="color:#fff;">◎</a>
+        <a href="https://x.com/SentriveAi" target="_blank" rel="noopener" aria-label="Sentrive on X" style="color:#fff;">𝕏</a>
+        <a href="https://www.linkedin.com/company/sentrive.ai" target="_blank" rel="noopener" aria-label="Sentrive on LinkedIn" style="color:#fff;">in</a>
+        <a href="https://medium.com/@sentrive.ai" target="_blank" rel="noopener" aria-label="Sentrive on Medium" style="color:#fff;">M</a>
+      </div>
+    </div>
+    <div style="margin-top:14px;font-size:11px;opacity:.7;">sentrive.ai@gmail.com</div>
+    <div style="margin-top:14px;display:flex;gap:16px;flex-wrap:wrap;font-size:11px;"><a href="privacy.html" style="color:#fff;text-decoration:underline;">Privacy Policy</a><a href="terms.html" style="color:#fff;text-decoration:underline;">Terms of Service</a><a href="cookies.html" style="color:#fff;text-decoration:underline;">Cookie Policy</a></div>
+  </footer>
+  </main>
+
+<script>
+  const API_BASE = window.DATAFIT_API_BASE || "http://127.0.0.1:8000";
+
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const dropzoneText = document.getElementById('dropzone-text');
+  const filenameEl = document.getElementById('filename');
+  const runBtn = document.getElementById('runBtn');
+  const errorBox = document.getElementById('errorBox');
+  const results = document.getElementById('results');
+  const scopeNote = document.getElementById('scopeNote');
+  const prioritySummary = document.getElementById('prioritySummary');
+  const prioritySummaryText = document.getElementById('prioritySummaryText');
+  const experimentOutput = document.getElementById('experimentOutput');
+
+  let selectedFile = null;
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  dropzone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileInput.click();
+    }
+  });
+  dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) {
+      selectedFile = e.dataTransfer.files[0];
+      updateFileDisplay();
+    }
+  });
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length) {
+      selectedFile = fileInput.files[0];
+      updateFileDisplay();
+    }
+  });
+
+  function updateFileDisplay() {
+    filenameEl.textContent = selectedFile.name;
+    dropzoneText.textContent = "Ready to assess:";
+    runBtn.disabled = false;
+    errorBox.style.display = 'none';
+  }
+
+  function showError(message) {
+    errorBox.textContent = message;
+    errorBox.style.display = 'block';
+    results.style.display = 'none';
+  }
+
+  function severityForScore(score) {
+    if (score >= 85) return 'info';
+    if (score >= 60) return 'warning';
+    return 'critical';
+  }
+
+  document.querySelectorAll('[data-experiment]').forEach((button) => {
+    button.addEventListener('click', () => runExperiment(button.dataset.experiment, button));
+  });
+
+  async function runExperiment(experiment, button) {
+    if (!selectedFile) return;
+    const target = document.getElementById('targetColumn').value.trim();
+    if (experiment !== 'cleanup-preview' && !target) {
+      experimentOutput.hidden = false;
+      experimentOutput.textContent = 'Enter a target column before running this experiment.';
+      document.getElementById('targetColumn').focus();
+      return;
+    }
+
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Running…';
+    experimentOutput.hidden = false;
+    experimentOutput.textContent = 'Running a disposable experiment…';
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    if (target) formData.append('target_column', target);
+
+    try {
+      const res = await fetch(`${API_BASE}/experiment/${experiment}`, { method: 'POST', body: formData });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'The experiment could not be completed.');
+
+      experimentOutput.textContent = `${data.evidence_summary || 'Experiment complete.'}\n\nCaveat: ${data.caveat || 'Results are directional evidence.'}`;
+      if (data.metrics && data.metrics.length) {
+        const table = document.createElement('table');
+        table.className = 'experiment-metrics';
+        const isBaseline = data.metrics.every(metric => Object.prototype.hasOwnProperty.call(metric, 'value'));
+        table.innerHTML = isBaseline
+          ? '<thead><tr><th>Metric</th><th>Value</th></tr></thead>'
+          : '<thead><tr><th>Metric</th><th>Before</th><th>After</th><th>Change</th></tr></thead>';
+        const body = document.createElement('tbody');
+        data.metrics.forEach((metric) => {
+          const row = document.createElement('tr');
+          const values = isBaseline
+            ? [metric.metric, metric.value]
+            : [metric.metric, metric.before, metric.after, `${Number(metric.change_pct).toFixed(1)}%`];
+          values.forEach((value) => {
+            const cell = document.createElement('td');
+            cell.textContent = value;
+            row.appendChild(cell);
+          });
+          body.appendChild(row);
+        });
+        table.appendChild(body);
+        experimentOutput.appendChild(table);
+      }
+    } catch (error) {
+      experimentOutput.textContent = error.message;
+    } finally {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
+
+  runBtn.addEventListener('click', async () => {
+    if (!selectedFile) return;
+    runBtn.disabled = true;
+    runBtn.textContent = "Assessing…";
+    errorBox.style.display = 'none';
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('task', document.getElementById('task').value);
+    const target = document.getElementById('targetColumn').value.trim();
+    if (target) formData.append('target_column', target);
+
+    try {
+      const res = await fetch(`${API_BASE}/assess`, { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (!res.ok) {
+        showError(data.detail || "Something went wrong assessing your file.");
+        return;
+      }
+
+      // Score ring + number
+      const sev = severityForScore(data.score);
+      const ring = document.getElementById('scoreRing');
+      const circumference = 2 * Math.PI * 54;
+      const filled = (data.score / 100) * circumference;
+      ring.setAttribute('stroke-dasharray', `${filled} ${circumference}`);
+      ring.classList.add(sev);
+
+      document.getElementById('scoreNumber').textContent = data.score;
+      document.getElementById('statusPill').textContent = data.status_label;
+
+      const priorityChecks = [...new Map(data.findings
+        .filter(f => f.severity === 'critical' || f.severity === 'warning')
+        .sort((a, b) => (b.points_deducted || 0) - (a.points_deducted || 0))
+        .map(f => [f.check, f])).values()].slice(0, 3);
+      prioritySummary.hidden = false;
+      prioritySummaryText.textContent = priorityChecks.length
+        ? priorityChecks.map(f => f.check.replace(/_/g, ' ')).join(', ') + '. Review these before training, then use the recommended actions below.'
+        : 'No high-priority dataset risk factors were detected. Continue with standard train/test validation.';
+
+      // Breakdown chart: points deducted per check, sorted descending
+      const chartWrap = document.getElementById('breakdownChart');
+      const barRows = document.getElementById('barRows');
+      barRows.innerHTML = '';
+      const groupedBars = new Map();
+      data.findings.filter(f => f.points_deducted > 0).forEach(f => {
+        const current = groupedBars.get(f.check);
+        if (!current || f.points_deducted > current.points_deducted) {
+          groupedBars.set(f.check, f);
+        }
+      });
+      const sortedFindings = [...groupedBars.values()]
+        .sort((a, b) => b.points_deducted - a.points_deducted)
+        .slice(0, 8);
+
+      if (sortedFindings.length > 0) {
+        const maxPoints = Math.max(...sortedFindings.map(f => f.points_deducted));
+        sortedFindings.forEach(f => {
+          const row = document.createElement('div');
+          row.className = 'bar-row';
+          const widthPct = Math.max(6, (f.points_deducted / maxPoints) * 100);
+          row.innerHTML = `
+            <div class="bar-label">${f.check.replace(/_/g, ' ')}</div>
+            <div class="bar-track"><div class="bar-fill ${f.severity}" style="width:${widthPct}%"></div></div>
+          `;
+          barRows.appendChild(row);
+        });
+        chartWrap.style.display = 'block';
+      } else {
+        chartWrap.style.display = 'none';
+      }
+
+      // Findings list
+      const findingsList = document.getElementById('findingsList');
+      findingsList.innerHTML = '';
+      const findingsByCheck = new Map();
+      data.findings.forEach(f => {
+        if (!findingsByCheck.has(f.check)) findingsByCheck.set(f.check, []);
+        findingsByCheck.get(f.check).push(f);
+      });
+      findingsByCheck.forEach((findings, check) => {
+        const highestSeverity = findings.some(f => f.severity === 'critical') ? 'critical'
+          : findings.some(f => f.severity === 'warning') ? 'warning' : 'info';
+        const div = document.createElement('div');
+        div.className = 'finding';
+        const head = document.createElement('div');
+        head.className = 'finding-head';
+        const displayCheck = check === 'label_noise' ? 'potential label inconsistency' : check.replace(/_/g, ' ');
+        head.innerHTML = `<span class="dot ${highestSeverity}"></span>${displayCheck}`;
+        div.appendChild(head);
+        if (findings.length === 1) {
+          div.insertAdjacentText('beforeend', findings[0].message.replace(/ \*\*Why it matters:\*\* /, '\nWhy it matters: '));
+        } else {
+          const list = document.createElement('ul');
+          list.style.cssText = 'padding-left:18px; margin:0;';
+          const impactMatch = findings.map(f => f.message.match(/ \*\*Why it matters:\*\* (.*)$/)).find(Boolean);
+          findings.forEach(f => {
+            const item = document.createElement('li');
+            item.textContent = f.message.replace(/ \*\*Why it matters:\*\*.*$/, '');
+            list.appendChild(item);
+          });
+          const note = document.createElement('p');
+          note.style.cssText = 'margin-top:8px; color:var(--ink-soft); font-size:12px;';
+          const affectedColumns = new Set(findings.map(f => f.detail && f.detail.column).filter(Boolean)).size;
+          const affectedCount = affectedColumns || findings.length;
+          note.textContent = `${affectedCount} affected column${affectedCount === 1 ? '' : 's'} detected. Review the individual observations before changing data.`;
+          div.appendChild(list);
+          if (impactMatch) {
+            const impact = document.createElement('p');
+            impact.style.cssText = 'margin-top:8px;';
+            impact.textContent = `Why it matters: ${impactMatch[1]}`;
+            div.appendChild(impact);
+          }
+          div.appendChild(note);
+        }
+        findingsList.appendChild(div);
+      });
+
+      // Next steps
+      const stepsList = document.getElementById('nextStepsList');
+      stepsList.innerHTML = '';
+      data.recommended_next_steps.forEach(step => {
+        const li = document.createElement('li');
+        li.textContent = step;
+        stepsList.appendChild(li);
+      });
+
+      scopeNote.textContent = data.scope_disclaimer || '';
+
+      results.style.display = 'block';
+      results.focus();
+    } catch (err) {
+      showError("Could not reach the DataFit server. Please try again.");
+    } finally {
+      runBtn.disabled = false;
+      runBtn.textContent = "Assess my dataset";
+    }
+  });
+</script>
+
+</body>
+</html>
