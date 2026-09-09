@@ -1,0 +1,9 @@
+fastapi==0.141.1
+imbalanced-learn==0.14.2
+numpy==2.4.4
+pandas==2.3.3
+python-multipart==0.0.32
+scikit-learn==1.8.0
+scipy==1.17.1
+uvicorn==0.52.4
+slowapi==0.1.10
