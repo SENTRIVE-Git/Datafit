@@ -29,6 +29,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -282,3 +283,8 @@ async def experiment_regression_baseline(request: Request, file: UploadFile = Fi
         "metrics": result.metrics,
         "caveat": result.caveat,
     })
+
+
+# Serve the static frontend from the same origin in the consolidated deployment.
+# This mount is declared last so it cannot shadow the API routes above.
+app.mount("/", StaticFiles(directory="app/frontend", html=True), name="frontend")
