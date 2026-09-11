@@ -487,7 +487,7 @@
   </main>
 
 <script>
-  const API_BASE = window.DATAFIT_API_BASE || "https://datafit-api.onrender.com";
+  const API_BASE = window.DATAFIT_API_BASE || window.location.origin;
 
   const dropzone = document.getElementById('dropzone');
   const fileInput = document.getElementById('fileInput');
