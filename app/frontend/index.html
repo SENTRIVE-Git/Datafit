@@ -94,6 +94,7 @@
     transition: transform 0.15s ease;
   }
   .hero-cta:hover { transform: translateY(-2px); }
+  .mobile-only { display: none; }
 
   /* decorative blobs */
   .blob {
@@ -282,6 +283,22 @@
 
   @media (max-width: 600px) {
     .top, .hero, .about, .how, footer { padding-left: 22px; padding-right: 22px; }
+    .top { padding-top: 24px; }
+    .brand-lockup .wordmark { font-size: 18px; }
+    .brand-lockup .tagline { max-width: 300px; font-size: 9px; line-height: 1.35; }
+    .hero { min-height: 500px; padding-top: 10px; padding-bottom: 24px; }
+    .hero-content { margin: 82px auto 0; }
+    .hero-content h1 { font-size: 40px; }
+    .hero-content .subhead { max-width: 310px; margin: 14px auto 0; font-size: 11px; line-height: 1.45; }
+    .hero-cta { margin-top: 24px; padding: 13px 16px; font-size: 11px; pointer-events: none; cursor: default; }
+    .blob-green, .blob-mauve, .blob-blue { display: block; opacity: 0.88; }
+    .blob-green { width: 112px; height: 112px; top: 8px; left: -30px; }
+    .blob-mauve { width: 126px; height: 126px; top: 238px; right: -38px; }
+    .blob-blue { width: 105px; height: 105px; top: 374px; right: 18px; }
+    .about { margin-top: 0; padding-top: 36px; padding-bottom: 42px; display: block; }
+    .about .score-card { margin-top: 28px; }
+    .hero-cta .desktop-cta { display: none; }
+    .hero-cta .mobile-only { display: inline; }
     footer .foot-wordmark { font-size: 40px; }
   }
 </style>
@@ -309,7 +326,7 @@
     <div class="hero-content">
       <h1 class="display">DataFit</h1>
       <div class="subhead">Know if your data is ready before you train.</div>
-      <a href="app.html" class="hero-cta">Let's test your dataset →</a>
+      <a href="app.html" class="hero-cta"><span class="desktop-cta">Let's test your dataset →</span><span class="mobile-only">Please open this site on a desktop.</span></a>
     </div>
   </section>
 
