@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>DataFit — Know if your data is ready before you train</title>
+<link rel="icon" type="image/png" href="/assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -287,8 +288,8 @@
     .brand-lockup .wordmark { font-size: 18px; }
     .brand-lockup .tagline { max-width: 300px; font-size: 9px; line-height: 1.35; }
     .hero { min-height: 500px; padding-top: 10px; padding-bottom: 24px; }
-    .hero-content { margin: 82px auto 0; }
-    .hero-content h1 { font-size: 40px; }
+    .hero-content { width: 100%; max-width: none; margin: 82px auto 0; padding: 0 4px; text-align: center; }
+    .hero-content h1 { width: 100%; font-size: clamp(34px, 11vw, 48px); text-align: center; white-space: nowrap; }
     .hero-content .subhead { max-width: 310px; margin: 14px auto 0; font-size: 11px; line-height: 1.45; }
     .hero-cta { margin-top: 24px; padding: 13px 16px; font-size: 11px; pointer-events: none; cursor: default; }
     .blob-green, .blob-mauve, .blob-blue { display: block; opacity: 0.88; }
@@ -297,7 +298,13 @@
     .blob-blue { width: 105px; height: 105px; top: 374px; right: 18px; }
     .about { margin-top: 0; padding-top: 36px; padding-bottom: 42px; display: block; }
     .about .score-card { margin-top: 28px; }
-    .about, .squiggle-wrap, .visual-wrap, .how, footer { display: none; }
+    .squiggle-wrap, .visual-wrap, .how { display: block; }
+    .visual-wrap { margin-top: 28px; }
+    .how { padding-top: 42px; padding-bottom: 42px; }
+    footer { display: block; padding-top: 42px; padding-bottom: 30px; }
+    .foot-bottom { align-items: flex-start; flex-direction: column; margin-top: 20px; }
+    .foot-icons { order: -1; }
+    footer > div:last-child { flex-wrap: wrap; row-gap: 8px; }
     .hero-cta .desktop-cta { display: none; }
     .hero-cta .mobile-only { display: inline; }
     footer .foot-wordmark { font-size: 40px; }
